@@ -812,7 +812,8 @@ var track=document.getElementById('carouselTrack');
 (function(){
   var wrap=document.querySelector('.carousel-wrap');
   if(!wrap||!track)return;
-  var startX=0,startT=0,currentX=0,lastX=0,velX=0,dragging=false,moveX=0;
+  var startX=0,startT=0,currentX=0,dragging=false;
+  var lastX=0,lastT=0,prevX=0,prevT=0;
   var maxScroll=track.scrollWidth-wrap.clientWidth;
 
   window.addEventListener('resize',function(){maxScroll=track.scrollWidth-wrap.clientWidth;snap();});
@@ -837,16 +838,16 @@ var track=document.getElementById('carouselTrack');
   // Mouse
   wrap.addEventListener('mousedown',function(e){
     if(e.target.closest('.c-card.zoomed'))return;
-    dragging=true;startX=e.clientX;startT=Date.now();lastX=e.clientX;velX=0;moveX=0;
+    dragging=true;startX=e.clientX;startT=Date.now();lastX=e.clientX;lastT=startT;prevX=e.clientX;prevT=startT;
     track.style.transition='none';
     wrap.classList.add('dragging');
     e.preventDefault();
   });
   document.addEventListener('mousemove',function(e){
     if(!dragging)return;
-    var dx=e.clientX-lastX;
-    velX=dx;lastX=e.clientX;moveX+=dx;
-    currentX-=dx;
+    prevX=lastX;prevT=lastT;
+    lastX=e.clientX;lastT=Date.now();
+    currentX-=(e.clientX-prevX);
     currentX=Math.max(-60,Math.min(currentX,maxScroll+60));
     updatePos(currentX);
   });
@@ -855,25 +856,27 @@ var track=document.getElementById('carouselTrack');
     dragging=false;
     wrap.classList.remove('dragging');
     track.style.transition='transform .5s cubic-bezier(.16,1,.3,1)';
-    var dt=Math.max(1,Date.now()-startT);
-    var v=velX/dt*200;
+    var dt=Math.max(1,lastT-prevT);
+    var v=(lastX-prevX)/dt*300;
     currentX-=v;
     currentX=Math.max(-20,Math.min(currentX,maxScroll+20));
     updatePos(currentX);
-    setTimeout(snap,60);
+    setTimeout(snap,80);
   });
 
   // Touch
   wrap.addEventListener('touchstart',function(e){
     if(e.target.closest('.c-card.zoomed'))return;
-    dragging=true;startX=e.touches[0].clientX;startT=Date.now();lastX=startX;velX=0;moveX=0;
+    var t=e.touches[0];
+    dragging=true;startX=t.clientX;startT=Date.now();lastX=t.clientX;lastT=startT;prevX=t.clientX;prevT=startT;
     track.style.transition='none';
   },{passive:true});
   wrap.addEventListener('touchmove',function(e){
     if(!dragging)return;
-    var dx=e.touches[0].clientX-lastX;
-    velX=dx;lastX=e.touches[0].clientX;moveX+=dx;
-    currentX-=dx;
+    var t=e.touches[0];
+    prevX=lastX;prevT=lastT;
+    lastX=t.clientX;lastT=Date.now();
+    currentX-=(t.clientX-prevX);
     currentX=Math.max(-60,Math.min(currentX,maxScroll+60));
     updatePos(currentX);
   },{passive:true});
@@ -881,19 +884,19 @@ var track=document.getElementById('carouselTrack');
     if(!dragging)return;
     dragging=false;
     track.style.transition='transform .5s cubic-bezier(.16,1,.3,1)';
-    var dt=Math.max(1,Date.now()-startT);
-    var v=velX/dt*200;
+    var dt=Math.max(1,lastT-prevT);
+    var v=(lastX-prevX)/dt*300;
     currentX-=v;
     currentX=Math.max(-20,Math.min(currentX,maxScroll+20));
     updatePos(currentX);
-    setTimeout(snap,60);
+    setTimeout(snap,80);
   });
 
   // Wheel horizontal scroll
   wrap.addEventListener('wheel',function(e){
     if(Math.abs(e.deltaX)>Math.abs(e.deltaY)){
       e.preventDefault();
-      currentX+=e.deltaX*1.2;
+      currentX+=e.deltaX*1.5;
       currentX=Math.max(0,Math.min(currentX,maxScroll));
       track.style.transition='transform .35s ease';
       updatePos(currentX);
