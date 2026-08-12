@@ -208,69 +208,67 @@ body{background:var(--cs);color:#e4e4ea;font-family:'Inter',system-ui,sans-serif
 .parallax-wrap{position:relative;overflow:hidden;}
 .parallax-layer{will-change:transform;transition:transform .1s linear;}
 
-/* ===== 3D CAROUSEL ===== */
-.carousel-container {
-  position: relative;
+/* ===== IMMERSIVE ACCORDION GALLERY ===== */
+.accordion-container {
   width: 100%;
-  height: 550px;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.accordion-gallery {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  perspective: 1000px;
-  overflow: hidden;
-  padding-bottom: 80px;
-}
-.carousel {
-  position: relative;
-  width: 250px;
-  height: 380px;
-  transform-style: preserve-3d;
-  animation: rotate 24s linear infinite;
-}
-.carousel:hover {
-  animation-play-state: paused;
-}
-@keyframes rotate {
-  0% { transform: perspective(1000px) rotateY(0deg); }
-  100% { transform: perspective(1000px) rotateY(360deg); }
-}
-.card {
-  position: absolute;
-  inset: 0;
   width: 100%;
-  height: 100%;
+  height: 500px;
+  gap: 12px;
+}
+.accordion-card {
+  position: relative;
+  flex: 1;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 
-    0 25px 50px rgba(0,0,0,.45),
-    0 10px 20px rgba(255,255,255,.03);
-  transform-style: preserve-3d;
-  border: 2px solid rgba(255,255,255,.1);
-  transition: .4s;
-  -webkit-box-reflect: below 12px linear-gradient(transparent 50%, rgba(0,0,0,.45));
-  transform: rotateY(calc(var(--i) * 60deg)) translateZ(350px);
+  transition: flex 0.7s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.7s ease, border-color 0.4s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,.05);
+  box-shadow: 0 10px 25px rgba(0,0,0,.3);
 }
-.card img {
+.accordion-card:hover {
+  flex: 6;
+  border-color: rgba(245,197,24,.4);
+  box-shadow: 14px 14px 40px rgba(0,0,0,.7), 0 0 50px rgba(204,26,26,.25);
+}
+.accordion-card img {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform .6s cubic-bezier(.16,1,.3,1);
+  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s ease;
+  filter: brightness(0.6) saturate(0.8);
 }
-.card:hover img {
-  transform: scale(1.08);
+.accordion-card:hover img {
+  transform: scale(1.04);
+  filter: brightness(1) saturate(1.1);
 }
-.card .card-content {
+.accordion-content {
   position: absolute;
   bottom: 0;
   left: 0;
-  right: 0;
-  padding: 1.5rem;
-  z-index: 10;
-  background: linear-gradient(to top, rgba(10,10,15,0.95) 20%, transparent);
+  width: 100%;
+  padding: 40px 30px 30px;
+  background: linear-gradient(to top, rgba(10,10,15,0.95) 15%, transparent);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease 0.3s, transform 0.4s ease 0.3s;
+  pointer-events: none;
 }
-.card:hover {
-  border-color: rgba(245,197,24,.4);
-  box-shadow: 14px 14px 35px rgba(0,0,0,.65), 0 0 50px rgba(204,26,26,.3);
+.accordion-card:hover .accordion-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* This inner wrap helps content stay wide while container shrinks */
+.accordion-content-inner {
+  width: 400px;
 }
 
 .checkered{height:6px;background-image:repeating-conic-gradient(var(--cs) 0% 25%,#e8e8ec 0% 50%);background-size:10px 10px;}
@@ -332,8 +330,19 @@ body{background:var(--cs);color:#e4e4ea;font-family:'Inter',system-ui,sans-serif
 @keyframes ticker{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 
 @media(max-width:768px){
-  .carousel { width: 180px; height: 280px; }
-  .card { transform: rotateY(calc(var(--i) * 60deg)) translateZ(190px); }
+  .accordion-gallery {
+    flex-direction: column;
+    height: 700px;
+  }
+  .accordion-card:hover {
+    flex: 3;
+  }
+  .accordion-content {
+    padding: 30px 20px 20px;
+  }
+  .accordion-content-inner {
+    width: 100%;
+  }
   .n-gauge{width:95px;height:95px;}
 }
 @media(prefers-reduced-motion:reduce){
@@ -561,54 +570,66 @@ body{background:var(--cs);color:#e4e4ea;font-family:'Inter',system-ui,sans-serif
         Calidad que se <span style="background:linear-gradient(135deg,#cc1a1a,#f5c518);-webkit-background-clip:text;background-clip:text;color:transparent;">nota al ver.</span>
       </h2>
     </div>
-    <div class="carousel-container">
-      <div class="carousel">
-        <div class="card" style="--i: 0;">
+    <div class="accordion-container">
+      <div class="accordion-gallery">
+        <div class="accordion-card">
           <img src="./unnamed (4).webp" alt="Motor Ferrari" class="cine-reveal">
-          <div class="card-content">
-            <span class="inline-block px-3 py-1 rounded-full bg-[#cc1a1a]/20 border border-[#cc1a1a]/30 text-[10px] font-bold text-[#e62020] uppercase tracking-wider mb-2">Alto rendimiento</span>
-            <h3 class="text-xl font-d font-bold text-white">Trabajos de alto nivel</h3>
-            <p class="text-[13px] text-[#8a8a9a] mt-1">Atendemos vehículos de todas las gamas.</p>
+          <div class="accordion-content">
+            <div class="accordion-content-inner">
+              <span class="inline-block px-3 py-1 rounded-full bg-[#cc1a1a]/20 border border-[#cc1a1a]/30 text-[10px] font-bold text-[#e62020] uppercase tracking-wider mb-2">Alto rendimiento</span>
+              <h3 class="text-xl font-d font-bold text-white">Trabajos de alto nivel</h3>
+              <p class="text-[13px] text-[#8a8a9a] mt-1">Atendemos vehículos de todas las gamas.</p>
+            </div>
           </div>
         </div>
-        <div class="card" style="--i: 1;">
+        <div class="accordion-card">
           <img src="./unnamed.webp" alt="Toyota RAV4 LED" class="cine-reveal">
-          <div class="card-content">
-            <span class="inline-block px-3 py-1 rounded-full bg-[#f5c518]/20 border border-[#f5c518]/30 text-[10px] font-bold text-[#f5c518] uppercase tracking-wider mb-2">LED</span>
-            <h3 class="text-lg font-d font-bold text-white">Iluminación completa</h3>
-            <p class="text-[12px] text-[#8a8a9a] mt-1">Faros y niebla LED de alta potencia.</p>
+          <div class="accordion-content">
+            <div class="accordion-content-inner">
+              <span class="inline-block px-3 py-1 rounded-full bg-[#f5c518]/20 border border-[#f5c518]/30 text-[10px] font-bold text-[#f5c518] uppercase tracking-wider mb-2">LED</span>
+              <h3 class="text-lg font-d font-bold text-white">Iluminación completa</h3>
+              <p class="text-[12px] text-[#8a8a9a] mt-1">Faros y niebla LED de alta potencia.</p>
+            </div>
           </div>
         </div>
-        <div class="card" style="--i: 2;">
+        <div class="accordion-card">
           <img src="./unnamed (2).webp" alt="Productos Pioneer" class="cine-reveal">
-          <div class="card-content">
-            <span class="inline-block px-3 py-1 rounded-full bg-[#f5c518]/20 border border-[#f5c518]/30 text-[10px] font-bold text-[#f5c518] uppercase tracking-wider mb-2">Audio</span>
-            <h3 class="text-lg font-d font-bold text-white">Productos Pioneer</h3>
-            <p class="text-[12px] text-[#8a8a9a] mt-1">Parlantes, subwoofers y más.</p>
+          <div class="accordion-content">
+            <div class="accordion-content-inner">
+              <span class="inline-block px-3 py-1 rounded-full bg-[#f5c518]/20 border border-[#f5c518]/30 text-[10px] font-bold text-[#f5c518] uppercase tracking-wider mb-2">Audio</span>
+              <h3 class="text-lg font-d font-bold text-white">Productos Pioneer</h3>
+              <p class="text-[12px] text-[#8a8a9a] mt-1">Parlantes, subwoofers y más.</p>
+            </div>
           </div>
         </div>
-        <div class="card" style="--i: 3;">
+        <div class="accordion-card">
           <img src="./unnamed (7).webp" alt="Pantallas cabecera" class="cine-reveal">
-          <div class="card-content">
-            <span class="inline-block px-3 py-1 rounded-full bg-[#cc1a1a]/20 border border-[#cc1a1a]/30 text-[10px] font-bold text-[#e62020] uppercase tracking-wider mb-2">Entretenimiento</span>
-            <h3 class="text-lg font-d font-bold text-white">Pantallas en cabecera</h3>
-            <p class="text-[12px] text-[#8a8a9a] mt-1">Sistema de entretenimiento trasero.</p>
+          <div class="accordion-content">
+            <div class="accordion-content-inner">
+              <span class="inline-block px-3 py-1 rounded-full bg-[#cc1a1a]/20 border border-[#cc1a1a]/30 text-[10px] font-bold text-[#e62020] uppercase tracking-wider mb-2">Entretenimiento</span>
+              <h3 class="text-lg font-d font-bold text-white">Pantallas en cabecera</h3>
+              <p class="text-[12px] text-[#8a8a9a] mt-1">Sistema de entretenimiento trasero.</p>
+            </div>
           </div>
         </div>
-        <div class="card" style="--i: 4;">
+        <div class="accordion-card">
           <img src="./unnamed (6).webp" alt="Asientos cuero" class="cine-reveal">
-          <div class="card-content">
-            <span class="inline-block px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[10px] font-bold text-white uppercase tracking-wider mb-2">Interior</span>
-            <h3 class="text-lg font-d font-bold text-white">Acabados premium</h3>
-            <p class="text-[12px] text-[#8a8a9a] mt-1">Tapicería y confort interior.</p>
+          <div class="accordion-content">
+            <div class="accordion-content-inner">
+              <span class="inline-block px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[10px] font-bold text-white uppercase tracking-wider mb-2">Interior</span>
+              <h3 class="text-lg font-d font-bold text-white">Acabados premium</h3>
+              <p class="text-[12px] text-[#8a8a9a] mt-1">Tapicería y confort interior.</p>
+            </div>
           </div>
         </div>
-        <div class="card" style="--i: 5;">
+        <div class="accordion-card">
           <img src="./unnamed (3).webp" alt="Pantalla Pioneer" class="cine-reveal">
-          <div class="card-content">
-            <span class="inline-block px-3 py-1 rounded-full bg-[#f5c518]/20 border border-[#f5c518]/30 text-[10px] font-bold text-[#f5c518] uppercase tracking-wider mb-2">Instalación</span>
-            <h3 class="text-xl font-d font-bold text-white">Pantallas multimedia</h3>
-            <p class="text-[13px] text-[#8a8a9a] mt-1">Pantallas Pioneer con GPS, Bluetooth y más.</p>
+          <div class="accordion-content">
+            <div class="accordion-content-inner">
+              <span class="inline-block px-3 py-1 rounded-full bg-[#f5c518]/20 border border-[#f5c518]/30 text-[10px] font-bold text-[#f5c518] uppercase tracking-wider mb-2">Instalación</span>
+              <h3 class="text-xl font-d font-bold text-white">Pantallas multimedia</h3>
+              <p class="text-[13px] text-[#8a8a9a] mt-1">Pantallas Pioneer con GPS, Bluetooth y más.</p>
+            </div>
           </div>
         </div>
       </div>
