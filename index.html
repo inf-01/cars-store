@@ -208,18 +208,70 @@ body{background:var(--cs);color:#e4e4ea;font-family:'Inter',system-ui,sans-serif
 .parallax-wrap{position:relative;overflow:hidden;}
 .parallax-layer{will-change:transform;transition:transform .1s linear;}
 
-.carousel-wrap{position:relative;width:100%;overflow-x:hidden;padding:20px 0 30px;cursor:grab;user-select:none;}
-.carousel-wrap.dragging{cursor:grabbing;}
-.carousel-track{display:flex;gap:20px;width:max-content;will-change:transform;transition:transform .4s cubic-bezier(.16,1,.3,1);}
-.c-card{cursor:pointer;transition:transform .4s cubic-bezier(.16,1,.3,1);flex-shrink-0;}
-.c-card:hover{transform:scale(1.03);}
-.c-card .showcase-card{transition:all .5s cubic-bezier(.16,1,.3,1);}
-.c-card:hover .showcase-card{border-color:rgba(245,197,24,.2);box-shadow:14px 14px 35px rgba(0,0,0,.65),0 0 50px rgba(204,26,26,.15),0 0 100px rgba(245,197,24,.06);}
-.c-card:hover img{transform:scale(1.08);}
-.c-card.zoomed{transform:scale(1.18)!important;z-index:50;position:relative;}
-.c-card.zoomed .showcase-card{box-shadow:14px 14px 40px rgba(0,0,0,.7),0 0 60px rgba(204,26,26,.2),0 0 120px rgba(245,197,24,.08);}
-.c-card.zoomed img{transform:scale(1.1);}
-.c-card img{transition:transform .6s cubic-bezier(.16,1,.3,1);}
+/* ===== 3D CAROUSEL ===== */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 550px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+  overflow: hidden;
+  padding-bottom: 80px;
+}
+.carousel {
+  position: relative;
+  width: 250px;
+  height: 380px;
+  transform-style: preserve-3d;
+  animation: rotate 24s linear infinite;
+}
+.carousel:hover {
+  animation-play-state: paused;
+}
+@keyframes rotate {
+  0% { transform: perspective(1000px) rotateY(0deg); }
+  100% { transform: perspective(1000px) rotateY(360deg); }
+}
+.card {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 
+    0 25px 50px rgba(0,0,0,.45),
+    0 10px 20px rgba(255,255,255,.03);
+  transform-style: preserve-3d;
+  border: 2px solid rgba(255,255,255,.1);
+  transition: .4s;
+  -webkit-box-reflect: below 12px linear-gradient(transparent 50%, rgba(0,0,0,.45));
+  transform: rotateY(calc(var(--i) * 60deg)) translateZ(350px);
+}
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .6s cubic-bezier(.16,1,.3,1);
+}
+.card:hover img {
+  transform: scale(1.08);
+}
+.card .card-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem;
+  z-index: 10;
+  background: linear-gradient(to top, rgba(10,10,15,0.95) 20%, transparent);
+}
+.card:hover {
+  border-color: rgba(245,197,24,.4);
+  box-shadow: 14px 14px 35px rgba(0,0,0,.65), 0 0 50px rgba(204,26,26,.3);
+}
 
 .checkered{height:6px;background-image:repeating-conic-gradient(var(--cs) 0% 25%,#e8e8ec 0% 50%);background-size:10px 10px;}
 .footer-check{height:5px;background-image:repeating-conic-gradient(var(--cs) 0% 25%,var(--red) 0% 50%);background-size:10px 10px;}
@@ -280,8 +332,8 @@ body{background:var(--cs);color:#e4e4ea;font-family:'Inter',system-ui,sans-serif
 @keyframes ticker{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 
 @media(max-width:768px){
-  .c-card{width:300px !important;}
-  .c-card .showcase-card{height:320px !important;}
+  .carousel { width: 180px; height: 280px; }
+  .card { transform: rotateY(calc(var(--i) * 60deg)) translateZ(190px); }
   .n-gauge{width:95px;height:95px;}
 }
 @media(prefers-reduced-motion:reduce){
@@ -509,16 +561,56 @@ body{background:var(--cs);color:#e4e4ea;font-family:'Inter',system-ui,sans-serif
         Calidad que se <span style="background:linear-gradient(135deg,#cc1a1a,#f5c518);-webkit-background-clip:text;background-clip:text;color:transparent;">nota al ver.</span>
       </h2>
     </div>
-    <div class="carousel-wrap relative">
-      <div class="absolute top-0 left-0 bottom-0 w-[120px] z-10 pointer-events-none" style="background:linear-gradient(90deg,rgba(17,17,24,.8),transparent);"></div>
-      <div class="absolute top-0 right-0 bottom-0 w-[120px] z-10 pointer-events-none" style="background:linear-gradient(270deg,rgba(17,17,24,.8),transparent);"></div>
-      <div id="carouselTrack" class="carousel-track flex gap-5 w-max">
-        <div class="c-card" style="width:420px;"><div class="showcase-card neon-halo" style="height:380px;"><img src="./unnamed (4).webp" alt="Motor Ferrari" class="w-full h-full object-cover cine-reveal"><div class="absolute bottom-0 left-0 right-0 p-6 z-10"><span class="inline-block px-3 py-1 rounded-full bg-[#cc1a1a]/20 border border-[#cc1a1a]/30 text-[10px] font-bold text-[#e62020] uppercase tracking-wider mb-2">Alto rendimiento</span><h3 class="text-xl font-d font-bold text-white">Trabajos de alto nivel</h3><p class="text-[13px] text-[#8a8a9a] mt-1">Atendemos vehículos de todas las gamas.</p></div></div></div>
-        <div class="c-card" style="width:340px;"><div class="showcase-card neon-halo-gold" style="height:380px;"><img src="./unnamed.webp" alt="Toyota RAV4 LED" class="w-full h-full object-cover cine-reveal"><div class="absolute bottom-0 left-0 right-0 p-6 z-10"><span class="inline-block px-3 py-1 rounded-full bg-[#f5c518]/20 border border-[#f5c518]/30 text-[10px] font-bold text-[#f5c518] uppercase tracking-wider mb-2">LED</span><h3 class="text-lg font-d font-bold text-white">Iluminación completa</h3><p class="text-[12px] text-[#8a8a9a] mt-1">Faros y niebla LED de alta potencia.</p></div></div></div>
-        <div class="c-card" style="width:340px;"><div class="showcase-card neon-halo" style="height:380px;"><img src="./unnamed (2).webp" alt="Productos Pioneer" class="w-full h-full object-cover cine-reveal"><div class="absolute bottom-0 left-0 right-0 p-6 z-10"><span class="inline-block px-3 py-1 rounded-full bg-[#f5c518]/20 border border-[#f5c518]/30 text-[10px] font-bold text-[#f5c518] uppercase tracking-wider mb-2">Audio</span><h3 class="text-lg font-d font-bold text-white">Productos Pioneer</h3><p class="text-[12px] text-[#8a8a9a] mt-1">Parlantes, subwoofers y más.</p></div></div></div>
-        <div class="c-card" style="width:340px;"><div class="showcase-card neon-halo-gold" style="height:380px;"><img src="./unnamed (7).webp" alt="Pantallas cabecera" class="w-full h-full object-cover cine-reveal"><div class="absolute bottom-0 left-0 right-0 p-6 z-10"><span class="inline-block px-3 py-1 rounded-full bg-[#cc1a1a]/20 border border-[#cc1a1a]/30 text-[10px] font-bold text-[#e62020] uppercase tracking-wider mb-2">Entretenimiento</span><h3 class="text-lg font-d font-bold text-white">Pantallas en cabecera</h3><p class="text-[12px] text-[#8a8a9a] mt-1">Sistema de entretenimiento trasero.</p></div></div></div>
-        <div class="c-card" style="width:340px;"><div class="showcase-card neon-halo" style="height:380px;"><img src="./unnamed (6).webp" alt="Asientos cuero" class="w-full h-full object-cover cine-reveal"><div class="absolute bottom-0 left-0 right-0 p-6 z-10"><span class="inline-block px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[10px] font-bold text-white uppercase tracking-wider mb-2">Interior</span><h3 class="text-lg font-d font-bold text-white">Acabados premium</h3><p class="text-[12px] text-[#8a8a9a] mt-1">Tapicería y confort interior.</p></div></div></div>
-        <div class="c-card" style="width:420px;"><div class="showcase-card neon-halo-gold" style="height:380px;"><img src="./unnamed (3).webp" alt="Pantalla Pioneer" class="w-full h-full object-cover cine-reveal"><div class="absolute bottom-0 left-0 right-0 p-6 z-10"><span class="inline-block px-3 py-1 rounded-full bg-[#f5c518]/20 border border-[#f5c518]/30 text-[10px] font-bold text-[#f5c518] uppercase tracking-wider mb-2">Instalación</span><h3 class="text-xl font-d font-bold text-white">Pantallas multimedia</h3><p class="text-[13px] text-[#8a8a9a] mt-1">Pantallas Pioneer con GPS, Bluetooth y más.</p></div></div></div>
+    <div class="carousel-container">
+      <div class="carousel">
+        <div class="card" style="--i: 0;">
+          <img src="./unnamed (4).webp" alt="Motor Ferrari" class="cine-reveal">
+          <div class="card-content">
+            <span class="inline-block px-3 py-1 rounded-full bg-[#cc1a1a]/20 border border-[#cc1a1a]/30 text-[10px] font-bold text-[#e62020] uppercase tracking-wider mb-2">Alto rendimiento</span>
+            <h3 class="text-xl font-d font-bold text-white">Trabajos de alto nivel</h3>
+            <p class="text-[13px] text-[#8a8a9a] mt-1">Atendemos vehículos de todas las gamas.</p>
+          </div>
+        </div>
+        <div class="card" style="--i: 1;">
+          <img src="./unnamed.webp" alt="Toyota RAV4 LED" class="cine-reveal">
+          <div class="card-content">
+            <span class="inline-block px-3 py-1 rounded-full bg-[#f5c518]/20 border border-[#f5c518]/30 text-[10px] font-bold text-[#f5c518] uppercase tracking-wider mb-2">LED</span>
+            <h3 class="text-lg font-d font-bold text-white">Iluminación completa</h3>
+            <p class="text-[12px] text-[#8a8a9a] mt-1">Faros y niebla LED de alta potencia.</p>
+          </div>
+        </div>
+        <div class="card" style="--i: 2;">
+          <img src="./unnamed (2).webp" alt="Productos Pioneer" class="cine-reveal">
+          <div class="card-content">
+            <span class="inline-block px-3 py-1 rounded-full bg-[#f5c518]/20 border border-[#f5c518]/30 text-[10px] font-bold text-[#f5c518] uppercase tracking-wider mb-2">Audio</span>
+            <h3 class="text-lg font-d font-bold text-white">Productos Pioneer</h3>
+            <p class="text-[12px] text-[#8a8a9a] mt-1">Parlantes, subwoofers y más.</p>
+          </div>
+        </div>
+        <div class="card" style="--i: 3;">
+          <img src="./unnamed (7).webp" alt="Pantallas cabecera" class="cine-reveal">
+          <div class="card-content">
+            <span class="inline-block px-3 py-1 rounded-full bg-[#cc1a1a]/20 border border-[#cc1a1a]/30 text-[10px] font-bold text-[#e62020] uppercase tracking-wider mb-2">Entretenimiento</span>
+            <h3 class="text-lg font-d font-bold text-white">Pantallas en cabecera</h3>
+            <p class="text-[12px] text-[#8a8a9a] mt-1">Sistema de entretenimiento trasero.</p>
+          </div>
+        </div>
+        <div class="card" style="--i: 4;">
+          <img src="./unnamed (6).webp" alt="Asientos cuero" class="cine-reveal">
+          <div class="card-content">
+            <span class="inline-block px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[10px] font-bold text-white uppercase tracking-wider mb-2">Interior</span>
+            <h3 class="text-lg font-d font-bold text-white">Acabados premium</h3>
+            <p class="text-[12px] text-[#8a8a9a] mt-1">Tapicería y confort interior.</p>
+          </div>
+        </div>
+        <div class="card" style="--i: 5;">
+          <img src="./unnamed (3).webp" alt="Pantalla Pioneer" class="cine-reveal">
+          <div class="card-content">
+            <span class="inline-block px-3 py-1 rounded-full bg-[#f5c518]/20 border border-[#f5c518]/30 text-[10px] font-bold text-[#f5c518] uppercase tracking-wider mb-2">Instalación</span>
+            <h3 class="text-xl font-d font-bold text-white">Pantallas multimedia</h3>
+            <p class="text-[13px] text-[#8a8a9a] mt-1">Pantallas Pioneer con GPS, Bluetooth y más.</p>
+          </div>
+        </div>
       </div>
     </div>
     <div class="neon-divider mt-16 mx-5"></div>
